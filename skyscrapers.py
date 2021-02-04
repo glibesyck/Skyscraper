@@ -6,8 +6,12 @@ def read_input(path: str):
     >>> read_input("check.txt")
     ['***21**', '452453*', '423145*', '*543215', '*35214*', '*41532*', '*2*1***']
     """
-    pass
-
+    list_of_lines = []
+    with open (path, 'r', encoding='utf-8') as file :
+        for line in file :
+            line = line.strip()
+            list_of_lines.append(line)
+    return list_of_lines
 
 def left_to_right_check(input_line: str, pivot: int):
     """
@@ -23,7 +27,16 @@ def left_to_right_check(input_line: str, pivot: int):
     >>> left_to_right_check("452453*", 5)
     False
     """
-    pass
+    max_height = 0
+    buildings = 0
+    result = False
+    for i in range (1, len(input_line)-1) :
+        if int(input_line[i]) > max_height :
+            buildings += 1
+            max_height = int(input_line[i])
+    if buildings == pivot :
+        result = True
+    return result
 
 
 def check_not_finished_board(board: list):
@@ -39,7 +52,11 @@ def check_not_finished_board(board: list):
     >>> check_not_finished_board(['***21**', '412453*', '423145*', '*5?3215', '*35214*', '*41532*', '*2*1***'])
     False
     """
-    pas
+    result = True
+    for line in board :
+        if "?" in line :
+            result = False
+    return result
 
 
 def check_uniqueness_in_rows(board: list):
@@ -55,7 +72,20 @@ def check_uniqueness_in_rows(board: list):
     >>> check_uniqueness_in_rows(['***21**', '412453*', '423145*', '*553215', '*35214*', '*41532*', '*2*1***'])
     False
     """
-    pass
+    result = True
+    for line in board :
+        if line[0] != "*" :
+            list_of_values = []
+            for i in range(1, len(line)) :
+                if line[i]!="*" :
+                    if line[i] in list_of_values :
+                        result = False
+                    else :
+                        list_of_values.append(line[i])
+    return result
+
+
+
 
 
 def check_horizontal_visibility(board: list):
@@ -73,7 +103,17 @@ def check_horizontal_visibility(board: list):
     >>> check_horizontal_visibility(['***21**', '452413*', '423145*', '*543215', '*35214*', '*41532*', '*2*1***'])
     False
     """
-    pass
+    result = False
+    if check_not_finished_board(board) :
+        result = True 
+        for line in board :
+            if line[0] != '*' and line[-1] == '*' :
+                if not left_to_right_check(line, int(line[0])) :
+                    result = False
+            elif line[0] == '*' and line[-1] != '*' :
+                if not left_to_right_check(line[::-1], int(line[-1])) :
+                    result = False
+    return result
 
 
 def check_columns(board: list):
@@ -89,7 +129,9 @@ def check_columns(board: list):
     >>> check_columns(['***21**', '412553*', '423145*', '*543215', '*35214*', '*41532*', '*2*1***'])
     False
     """
-    pass
+    new_board = ["*"*len(board) for i in range(len(board)+1)]
+    return new_board
+
 
 
 def check_skyscrapers(input_path: str):

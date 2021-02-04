@@ -1,3 +1,9 @@
+'''
+Module for setup of Skyscraper game!
+Github :
+https://github.com/glibesyck/Skyscrapper.git
+'''
+
 def read_input(path: str):
     """
     Read game board file from path.
@@ -76,7 +82,7 @@ def check_uniqueness_in_rows(board: list):
     for line in board :
         if line[0] != "*" :
             list_of_values = []
-            for i in range(1, len(line)) :
+            for i in range(1, len(line)-1) :
                 if line[i]!="*" :
                     if line[i] in list_of_values :
                         result = False
@@ -105,11 +111,14 @@ def check_horizontal_visibility(board: list):
     """
     result = False
     if check_not_finished_board(board) :
-        result = True 
+        result = True
         for line in board :
-            if line[0] != '*' and line[-1] == '*' :
+            if line[0] != '*' :
                 if not left_to_right_check(line, int(line[0])) :
                     result = False
+                if line[-1] != '*' :
+                    if not left_to_right_check(line[::-1], int(line[-1])) :
+                        result = False
             elif line[0] == '*' and line[-1] != '*' :
                 if not left_to_right_check(line[::-1], int(line[-1])) :
                     result = False
@@ -129,9 +138,16 @@ def check_columns(board: list):
     >>> check_columns(['***21**', '412553*', '423145*', '*543215', '*35214*', '*41532*', '*2*1***'])
     False
     """
-    new_board = ["*"*len(board) for i in range(len(board)+1)]
-    return new_board
-
+    new_board = []
+    result = False
+    for i in range(len(board)) :
+        new_line = ''
+        for j in range(len(board)) :
+            new_line = new_line + board[j][i]
+        new_board.append(new_line)
+    if check_horizontal_visibility(new_board) and check_uniqueness_in_rows(board) :
+        result = True
+    return result
 
 
 def check_skyscrapers(input_path: str):
@@ -143,8 +159,9 @@ def check_skyscrapers(input_path: str):
     >>> check_skyscrapers("check.txt")
     True
     """
-    pass
-
-
-if __name__ == "__main__":
-    print(check_skyscrapers("check.txt"))
+    result = False
+    board = read_input(input_path)
+    if check_columns(board) and check_horizontal_visibility(board) and\
+         check_uniqueness_in_rows(board) and check_not_finished_board(board) :
+        result = True
+    return result
